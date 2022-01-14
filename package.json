@@ -1,0 +1,32 @@
+{
+  "name": "sube",
+  "version": "0.0.0",
+  "description": "Subscribe to anything util",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spectjs/sube.git"
+  },
+  "keywords": [
+    "subscribe",
+    "observable",
+    "async-iterator",
+    "rxjs",
+    "rx",
+    "promise"
+  ],
+  "author": "Dmitry iv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spectjs/sube/issues"
+  },
+  "homepage": "https://github.com/spectjs/sube#readme",
+  "devDependencies": {
+    "terser": "^5.10.0",
+    "tst": "^7.0.0",
+    "wait-please": "^3.1.0"
+  }
+}
