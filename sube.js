@@ -2,7 +2,6 @@
 Symbol.observable||=Symbol('observable')
 
 // observable utils
-// FIXME: make an external dependency, shareable with spect/tmpl-parts
 export const observable = (arg) => arg && !!(
   arg[Symbol.observable] || arg[Symbol.asyncIterator] ||
   (arg.call && arg.set) ||
