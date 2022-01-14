@@ -5,7 +5,8 @@
   "main": "sube.js",
   "type": "module",
   "scripts": {
-    "test": "node --loader ./test/https-loader.js test"
+    "test": "node --loader ./test/https-loader.js test",
+    "build": "terser sube.js -o sube.min.js --module -c passes=3 -m"
   },
   "repository": {
     "type": "git",
