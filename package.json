@@ -1,6 +1,6 @@
 {
   "name": "sube",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Subscribe to anything util",
   "main": "sube.js",
   "type": "module",
