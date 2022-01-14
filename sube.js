@@ -1,15 +1,15 @@
 // lil subscriby (v-less)
 Symbol.observable||=Symbol('observable')
 
-// observable utils
-export const observable = (arg) => arg && !!(
+// is target observable
+export const observable = arg => arg && !!(
   arg[Symbol.observable] || arg[Symbol.asyncIterator] ||
-  (arg.call && arg.set) ||
+  arg.call && arg.set ||
   arg.subscribe || arg.then
   // || arg.mutation && arg._state != null
 )
 
-export default (target, next, error, complete, stop) => (
+export default (target, next, error, complete, stop) => 
   target && (
     target.subscribe?.( next, error, complete ) ||
     target[Symbol.observable]?.().subscribe?.( next, error, complete ) ||
@@ -24,4 +24,4 @@ export default (target, next, error, complete, stop) => (
       })()
     ) && (_ => stop=1)
   )
-)
+
