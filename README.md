@@ -12,7 +12,7 @@ unsube()
 Kinds of sources:
 
 * _Promise_ / _Thenable_
-* _Observable_ / _Subscribable_ / _Subject_ (rxjs)
+* _Observable_ / _Subscribable_ / _Subject_ ([rxjs](https://www.npmjs.com/package/rxjs))
 * _AsyncIterable_
 * _observ-\*_ ([observ](https://www.npmjs.com/package/observ), [observable](https://www.npmjs.com/package/observable), [mutant](https://www.npmjs.com/package/mutant))
 
