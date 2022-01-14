@@ -1,4 +1,4 @@
-# sube
+# sube <a href="https://github.com/spectjs/sube/actions/workflows/node.js.yml"><img src="https://github.com/spectjs/sube/actions/workflows/node.js.yml/badge.svg"/></a> <a href="http://npmjs.org/sube"><img src="https://img.shields.io/npm/v/sube"/></a>
 
 > Subscribe to any reactive source
 
@@ -6,7 +6,6 @@
 import sube from './sube.js'
 
 unsube = sube(source, onnext, onerror?, oncomplete?)
-
 unsube()
 ```
 
