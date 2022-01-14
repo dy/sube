@@ -2,9 +2,10 @@
   "name": "sube",
   "version": "0.0.0",
   "description": "Subscribe to anything util",
-  "main": "index.js",
+  "main": "sube.js",
+  "type": "module",
   "scripts": {
-    "test": "node test"
+    "test": "node --loader ./test/https-loader.js test"
   },
   "repository": {
     "type": "git",
