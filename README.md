@@ -18,6 +18,6 @@ Kinds of sources:
 * _AsyncIterable_
 * _observ-\*_ ([observ](https://www.npmjs.com/package/observ), [observable](https://www.npmjs.com/package/observable), [mutant](https://www.npmjs.com/package/mutant))
 
-Subscription is [weak](https://v8.dev/features/weak-references), so manual `unsub()` isn't necessary.
+Subscription is [weak](https://v8.dev/features/weak-references), so manual `unsub()` isn't necessary - it is called when `source` is garbage collected.
 
 <p align="center">🕉<p>

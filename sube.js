@@ -11,15 +11,10 @@ export const observable = arg => arg && !!(
 // cleanup subscriptions
 // ref: https://v8.dev/features/weak-references
 // FIXME: maybe there's smarter way to unsubscribe in weakref
-const registry = new FinalizationRegistry(unsub => unsub.call?.()),
-
-// create weak wrapped handler
-weak = (fn, ref=new WeakRef(fn)) => e => ref.deref()?.(e)
+const registry = new FinalizationRegistry(unsub => unsub.call?.())
 
 // lil subscriby (v-less)
 export default (target, next, error, complete, stop, unsub) => target && (
-  next &&= weak(next), error &&= weak(error), complete &&= weak(complete),
-
   unsub = target.subscribe?.( next, error, complete ) ||
   target[Symbol.observable]?.().subscribe?.( next, error, complete ) ||
   target.set && target.call?.(stop, next) || // observ
