@@ -1,6 +1,6 @@
 {
   "name": "sube",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Weak subscribe to any reactive source",
   "main": "sube.js",
   "type": "module",
