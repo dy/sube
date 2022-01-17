@@ -17,7 +17,7 @@ const registry = new FinalizationRegistry(unsub => unsub.call?.()),
 weak = (fn, ref=new WeakRef(fn)) => e => ref.deref()?.(e)
 
 // lil subscriby (v-less)
-export default (target, next, error, complete, stop, unsub, x=next) => target && (
+export default (target, next, error, complete, stop, unsub) => target && (
   next &&= weak(next), error &&= weak(error), complete &&= weak(complete),
 
   unsub = target.subscribe?.( next, error, complete ) ||
