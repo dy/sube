@@ -17,7 +17,7 @@ const registry = new FinalizationRegistry(unsub => unsub.call?.()),
 weak = (fn, ref=new WeakRef(fn)) => e => ref.deref()?.(e)
 
 // lil subscriby (v-less)
-export default (target, next, error, complete, stop, unsub) => target && (
+export default (target, next, error, complete, stop, unsub, x=next) => target && (
   next &&= weak(next), error &&= weak(error), complete &&= weak(complete),
 
   unsub = target.subscribe?.( next, error, complete ) ||
@@ -25,16 +25,18 @@ export default (target, next, error, complete, stop, unsub) => target && (
   target.set && target.call?.(stop, next) || // observ
   (
     target.then?.(v => (!stop && next(v), complete?.()), error) ||
-    (async _ => {
+    (async v => {
       try {
         // FIXME: possible drawback: it will catch error happened in next, not only in iterator
-        for await (target of target) { if (stop) return; next(target) }
+        for await (v of target) { if (stop) return; next(v) }
         complete?.()
       } catch (err) { error?.(err) }
     })()
   ) && (_ => stop=1),
 
   // register autocleanup
-  registry.register(next||error||complete, unsub),
+  registry.register(target, unsub),
   unsub
 )
+
+
