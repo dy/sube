@@ -86,7 +86,21 @@ t('asyncIterable', async () => {
   is(arr, [0,1,2,'end'])
 })
 
-t('does not keep observer refs', async () => {
+t('does not keep observer refs for mock', async () => {
+  let arr = []
+  let mock = {subscribe(){ arr.push('sub'); return () => arr.push('unsub') }}
+
+  let unsub = sube(mock, v=>arr.push(v))
+  is(arr, ['sub'])
+
+  mock = null
+
+  await gc()
+
+  is(arr, ['sub', 'unsub'])
+})
+
+t('does not keep observer refs for v', async () => {
   // let foo = {x:1};
   // const weakRef = new WeakRef(foo);
   // foo = undefined; // Clear strong reference
@@ -94,18 +108,20 @@ t('does not keep observer refs', async () => {
   let v1 = v(0), v1sub = v1.subscribe
   v1.subscribe = (...args) => {let unsub = v1sub.apply(v1,args); return () => (arr.push('end'), unsub())}
 
-  sube(v1, v=>arr.push(v))
+  let unsub = sube(v1, v=>arr.push(v))
   is(arr, [0])
 
   v1 = null
+
   await gc()
 
   is(arr, [0, 'end'])
 })
 
-async function gc() {
+async function gc () {
   // gc is async somehow
   await time(50)
   global.gc()
+  eval("%CollectGarbage('all')");
   await time(50)
 }

@@ -29,7 +29,7 @@
   "devDependencies": {
     "terser": "^5.10.0",
     "tst": "^7.0.0",
-    "value-ref": "^1.4.1",
+    "value-ref": "^1.4.2",
     "wait-please": "^3.1.0"
   }
 }
