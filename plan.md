@@ -1,5 +1,9 @@
 # plan
 
-* [ ] make tests
+* [x] weak subscribe
+  1. https://v8.dev/features/weak-references
+  2. https://github.com/tc39/proposal-weakrefs#a-note-of-caution
 
-* [ ] support error, complete
+* [x] make tests
+
+* [x] support error, complete

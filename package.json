@@ -1,7 +1,7 @@
 {
   "name": "sube",
   "version": "1.0.3",
-  "description": "Subscribe to anything util",
+  "description": "Weak subscribe to any reactive source",
   "main": "sube.js",
   "type": "module",
   "scripts": {
