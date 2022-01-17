@@ -1,6 +1,7 @@
-import t, {is} from '../node_modules/tst/tst.js'
+import t, {is} from 'tst'
 import sube from '../sube.js'
-import { time, tick } from '../node_modules/wait-please/index.js'
+import { time, tick } from 'wait-please'
+import v from 'value-ref'
 
 t('Promise: next', async () => {
   let arr = []
@@ -84,3 +85,27 @@ t('asyncIterable', async () => {
   await tick()
   is(arr, [0,1,2,'end'])
 })
+
+t('does not keep observer refs', async () => {
+  // let foo = {x:1};
+  // const weakRef = new WeakRef(foo);
+  // foo = undefined; // Clear strong reference
+  let arr = []
+  let v1 = v(0), v1sub = v1.subscribe
+  v1.subscribe = (...args) => {let unsub = v1sub.apply(v1,args); return () => (arr.push('end'), unsub())}
+
+  sube(v1, v=>arr.push(v))
+  is(arr, [0])
+
+  v1 = null
+  await gc()
+
+  is(arr, [0, 'end'])
+})
+
+async function gc() {
+  // gc is async somehow
+  await time(50)
+  global.gc()
+  await time(50)
+}
