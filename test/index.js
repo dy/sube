@@ -28,7 +28,7 @@ t('rxjs', async () => {
   const { Subject } = await import('https://cdn.skypack.dev/rxjs')
   const subject = new Subject();
 
-  sube(subject, v => arr.push(v), err => arr.push(err), () => arr.push('end'))
+  const unsub = sube(subject, v => arr.push(v), err => arr.push(err), () => arr.push('end'))
 
   is(arr, [])
   subject.next(1);
@@ -38,6 +38,8 @@ t('rxjs', async () => {
 
   subject.complete()
   is(arr, [1,2,'end'])
+
+  unsub()
 })
 
 t('observ', async () => {
@@ -88,7 +90,7 @@ t('asyncIterable', async () => {
 
 t('does not keep observer refs for mock', async () => {
   let arr = []
-  let mock = {subscribe(){ arr.push('sub'); return () => arr.push('unsub') }}
+  let mock = {subscribe(){ arr.push('sub'); return {unsubscribe:() => arr.push('unsub')} }}
 
   let unsub = sube(mock, v=>arr.push(v))
   is(arr, ['sub'])
@@ -102,7 +104,7 @@ t('does not keep observer refs for mock', async () => {
 
 t('collecting callback doesnt invoke unsubscribe', async () => {
   let arr = []
-  let mock = {subscribe(){ arr.push('sub'); return () => arr.push('unsub') }}
+  let mock = {subscribe(){ arr.push('sub'); return {unsubscribe:() => arr.push('unsub')} }}
   let cb = v => arr.push(v)
   let unsub = sube(mock, cb)
   is(arr, ['sub'])
@@ -120,7 +122,7 @@ t('does not keep observer refs for v', async () => {
   // foo = undefined; // Clear strong reference
   let arr = []
   let v1 = v(0), v1sub = v1.subscribe
-  v1.subscribe = (...args) => {let unsub = v1sub.apply(v1,args); return () => (arr.push('end'), unsub())}
+  v1.subscribe = (...args) => {let unsub = v1sub.apply(v1,args); return {unsubscribe:() => (arr.push('end'), unsub())}}
 
   let unsub = ((cb=v=>arr.push(v))=> sube(v1, v=>arr.push(v)))();
   is(arr, [0])

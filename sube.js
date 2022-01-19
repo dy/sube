@@ -1,3 +1,4 @@
+// lil subscriby (v-less)
 Symbol.observable||=Symbol('observable')
 
 // is target observable
@@ -11,12 +12,13 @@ export const observable = arg => arg && !!(
 // cleanup subscriptions
 // ref: https://v8.dev/features/weak-references
 // FIXME: maybe there's smarter way to unsubscribe in weakref
-const registry = new FinalizationRegistry(unsub => unsub.call?.())
+const registry = new FinalizationRegistry(unsub => unsub.call?.()),
 
-// lil subscriby (v-less)
-export default (target, next, error, complete, stop, unsub) => target && (
-  unsub = target.subscribe?.( next, error, complete ) ||
-  target[Symbol.observable]?.().subscribe?.( next, error, complete ) ||
+// this thingy must lose target out of context to let gc hit
+unsubr = sub => sub && (() => sub.unsubscribe?.())
+
+export default (target, next, error, complete, stop, sub, unsub) => target && (
+  unsub = unsubr((target[Symbol.observable]?.() || target).subscribe?.( next, error, complete )) ||
   target.set && target.call?.(stop, next) || // observ
   (
     target.then?.(v => (!stop && next(v), complete?.()), error) ||
@@ -33,5 +35,3 @@ export default (target, next, error, complete, stop, unsub) => target && (
   registry.register(target, unsub),
   unsub
 )
-
-
