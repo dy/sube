@@ -11,7 +11,7 @@ export const observable = arg => arg && !!(
 
 // cleanup subscriptions
 // ref: https://v8.dev/features/weak-references
-// FIXME: maybe there's smarter way to unsubscribe in weakref
+// FIXME: maybe there's smarter way to unsubscribe in weakref, like, wrapping target in weakref?
 const registry = new FinalizationRegistry(unsub => unsub.call?.()),
 
 // this thingy must lose target out of context to let gc hit
