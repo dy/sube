@@ -17,7 +17,7 @@ const registry = new FinalizationRegistry(unsub => unsub.call?.()),
 // this thingy must lose target out of context to let gc hit
 unsubr = sub => sub && (() => sub.unsubscribe?.())
 
-export default (target, next, error, complete, stop, sub, unsub) => target && (
+export default (target, next, error, complete, stop, unsub) => target && (
   unsub = unsubr((target[Symbol.observable]?.() || target).subscribe?.( next, error, complete )) ||
   target.set && target.call?.(stop, next) || // observ
   (
