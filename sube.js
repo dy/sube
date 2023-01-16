@@ -1,7 +1,9 @@
-// lil subscriby (v-less)
+// lil subscriby
+
+// polyfill known
 Symbol.observable||=Symbol('observable')
 
-// is target observable
+// is target observable?
 export const observable = arg => arg && !!(
   arg[Symbol.observable] || arg[Symbol.asyncIterator] ||
   arg.call && arg.set ||
