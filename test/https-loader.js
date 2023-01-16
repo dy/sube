@@ -9,10 +9,12 @@ export function resolve(specifier, context, defaultResolve) {
   // passed along to the later hooks below.
   if (specifier.startsWith('https://')) {
     return {
+      shortCircuit: true,
       url: specifier
     };
   } else if (parentURL && parentURL.startsWith('https://')) {
     return {
+      shortCircuit: true,
       url: new URL(specifier, parentURL).href
     };
   }
@@ -21,17 +23,18 @@ export function resolve(specifier, context, defaultResolve) {
   return defaultResolve(specifier, context, defaultResolve);
 }
 
-export function load(url, context, defaultLoad) {
+export async function load(url, context, defaultLoad) {
   // For JavaScript to be loaded over the network, we need to fetch and
   // return it.
   if (url.startsWith('https://')) {
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       get(url, (res) => {
         let data = '';
         res.on('data', (chunk) => data += chunk);
         res.on('end', () => resolve({
           // This example assumes all network-provided JavaScript is ES module
           // code.
+          shortCircuit: true,
           format: 'module',
           source: data,
         }));
