@@ -12,12 +12,10 @@ unsub() // unsubscribe
 
 Kinds of sources:
 
-* _Promise_, _Thenable_
+* _Promise_, _Thenable_ (autocleanup)
 * _Observable_, _Subscribable_, _Subject_ ([rxjs](https://ghub.io/rxjs), [zen-observable](https://github.com/zenparsing/zen-observable) etc.)
 * _AsyncIterable_ (see [it-awesome](https://github.com/alanshaw/it-awesome))
 * _Signal_ ([@preact/signals](https://ghub.io/@preact/signals), [value-ref](https://ghub.io/value-ref) etc.)
 * _observ-\*_ ([observ](https://www.npmjs.com/package/observ), [observable](https://www.npmjs.com/package/observable), [mutant](https://www.npmjs.com/package/mutant))
-
-Subscription is [weak](https://v8.dev/features/weak-references), so manual `unsub()` isn't necessary - it is called when `source` is garbage collected.
 
 <p align="center">🕉<p>

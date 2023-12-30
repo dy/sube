@@ -31,5 +31,8 @@
     "tst": "^7.0.0",
     "value-ref": "^1.4.3",
     "wait-please": "^3.1.0"
+  },
+  "dependencies": {
+    "@preact/signals-core": "^1.5.1"
   }
 }

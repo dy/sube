@@ -1,7 +1,8 @@
-import t, {is} from 'tst'
+import t, { is } from 'tst'
 import sube from '../sube.js'
 import { time, tick } from 'wait-please'
 import v from 'value-ref'
+import { effect, signal } from '@preact/signals-core'
 
 t('Promise: next', async () => {
   let arr = []
@@ -34,20 +35,20 @@ t('rxjs', async () => {
   subject.next(1);
   is(arr, [1])
   subject.next(2);
-  is(arr, [1,2])
+  is(arr, [1, 2])
 
   subject.complete()
-  is(arr, [1,2,'end'])
+  is(arr, [1, 2, 'end'])
 
   unsub()
 })
 
 t('observ', async () => {
   const arr = []
-  const {default: Observable} = await import('https://cdn.skypack.dev/observ')
+  const { default: Observable } = await import('https://cdn.skypack.dev/observ')
 
   var v = Observable(1)
-  sube(v, v=>arr.push(v))
+  sube(v, v => arr.push(v))
   is(arr, [])
   v.set(2)
   is(arr, [2])
@@ -55,13 +56,13 @@ t('observ', async () => {
 
 t('observable', async () => {
   const arr = []
-  const {default: Observable} = await import('https://cdn.skypack.dev/observable')
+  const { default: Observable } = await import('https://cdn.skypack.dev/observable')
 
   var v = Observable(1)
-  sube(v, v=>arr.push(v))
+  sube(v, v => arr.push(v))
   is(arr, [1])
   v(2)
-  is(arr, [1,2])
+  is(arr, [1, 2])
 })
 
 
@@ -80,19 +81,19 @@ t('asyncIterable', async () => {
     }
   };
 
-  sube(asyncIterable, v=>arr.push(v), err => err, v => arr.push('end'))
-  is(arr,[])
+  sube(asyncIterable, v => arr.push(v), err => err, v => arr.push('end'))
+  is(arr, [])
   await tick()
-  is(arr, [0,1])
+  is(arr, [0, 1])
   await tick()
-  is(arr, [0,1,2,'end'])
+  is(arr, [0, 1, 2, 'end'])
 })
 
 t('does not keep observer refs for mock', async () => {
   let arr = []
-  let mock = {subscribe(){ arr.push('sub'); return {unsubscribe:() => arr.push('unsub')} }}
+  let mock = { subscribe() { arr.push('sub'); return { unsubscribe: () => arr.push('unsub') } } }
 
-  let unsub = sube(mock, v=>arr.push(v))
+  let unsub = sube(mock, v => arr.push(v))
   is(arr, ['sub'])
 
   mock = null
@@ -104,7 +105,7 @@ t('does not keep observer refs for mock', async () => {
 
 t('collecting callback doesnt invoke unsubscribe', async () => {
   let arr = []
-  let mock = {subscribe(){ arr.push('sub'); return {unsubscribe:() => arr.push('unsub')} }}
+  let mock = { subscribe() { arr.push('sub'); return { unsubscribe: () => arr.push('unsub') } } }
   let cb = v => arr.push(v)
   let unsub = sube(mock, cb)
   is(arr, ['sub'])
@@ -122,9 +123,10 @@ t('does not keep observer refs for v', async () => {
   // foo = undefined; // Clear strong reference
   let arr = []
   let v1 = v(0), v1sub = v1.subscribe
-  v1.subscribe = (...args) => {let unsub = v1sub.apply(v1,args); return {unsubscribe:() => (arr.push('end'), unsub())}}
+  // v1.subscribe = (...args) => { let unsub = v1sub.apply(v1, args); return { unsubscribe: () => (arr.push('end'), unsub()) } }
 
-  let unsub = ((cb=v=>arr.push(v))=> sube(v1, v=>arr.push(v)))();
+  sube(v1, v => arr.push(v), null, () => arr.push('end'))
+
   is(arr, [0])
 
   await gc()
@@ -140,7 +142,29 @@ t('does not keep observer refs for v', async () => {
   is(arr, [0, 1, 'end'])
 })
 
-async function gc () {
+t('does not keep observer refs for signal', async () => {
+  let arr = []
+  let s1 = signal(0)
+
+  const unsub = sube(s1, v => arr.push(v), null, () => arr.push('end'))
+
+  is(arr, [0])
+
+  await gc()
+  is(arr, [0])
+
+  s1.value = 1
+  await tick()
+  is(arr, [0, 1])
+
+  unsub()
+  s1 = null
+  await gc()
+
+  is(arr, [0, 1, 'end'])
+})
+
+async function gc() {
   // gc is async somehow
   await time(50)
   global.gc()

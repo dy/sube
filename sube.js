@@ -1,7 +1,7 @@
 // lil subscriby
 
 // polyfill known
-Symbol.observable||=Symbol('observable')
+Symbol.observable ||= Symbol('observable')
 
 // is target observable?
 export const observable = arg => arg && !!(
@@ -14,13 +14,15 @@ export const observable = arg => arg && !!(
 // cleanup subscriptions
 // ref: https://v8.dev/features/weak-references
 // FIXME: maybe there's smarter way to unsubscribe in weakref, like, wrapping target in weakref?
-const registry = new FinalizationRegistry(unsub => unsub.call?.()),
+const registry = new FinalizationRegistry(unsub => (!unsub?._ && unsub.call?.())),
 
-// this thingy must lose target out of context to let gc hit
-unsubr = sub => sub && (() => sub.unsubscribe?.())
+  // this thingy must lose target out of context to let gc hit
+  unsubr = (unsub, complete, out) => (
+    unsub && (out = () => (typeof unsub === 'function' ? unsub() : unsub?.unsubscribe?.(), out._ = true, complete?.()))
+  )
 
 export default (target, next, error, complete, stop, unsub) => target && (
-  unsub = unsubr((target[Symbol.observable]?.() || target).subscribe?.( next, error, complete )) ||
+  unsub = unsubr((target[Symbol.observable]?.() || target).subscribe?.(next, error, complete), complete) ||
   target.set && target.call?.(stop, next) || // observ
   (
     target.then?.(v => (!stop && next(v), complete?.()), error) ||
@@ -31,7 +33,7 @@ export default (target, next, error, complete, stop, unsub) => target && (
         complete?.()
       } catch (err) { error?.(err) }
     })()
-  ) && (_ => stop=1),
+  ) && (_ => stop = 1),
 
   // register autocleanup
   registry.register(target, unsub),
