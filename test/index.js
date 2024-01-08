@@ -118,12 +118,10 @@ t('collecting callback doesnt invoke unsubscribe', async () => {
 })
 
 t('does not keep observer refs for v', async () => {
-  // let foo = {x:1};
-  // const weakRef = new WeakRef(foo);
-  // foo = undefined; // Clear strong reference
   let arr = []
-  let v1 = v(0), v1sub = v1.subscribe
-  // v1.subscribe = (...args) => { let unsub = v1sub.apply(v1, args); return { unsubscribe: () => (arr.push('end'), unsub()) } }
+  let v0 = v(0),
+    // NOTE: the one below retains memory
+    v1 = v0 // v.from(v0, v => v),
 
   sube(v1, v => arr.push(v), null, () => arr.push('end'))
 
@@ -136,7 +134,7 @@ t('does not keep observer refs for v', async () => {
   await tick()
   is(arr, [0, 1])
 
-  v1 = null
+  v1 = v0 = null
   await gc()
 
   is(arr, [0, 1, 'end'])
@@ -157,6 +155,7 @@ t('does not keep observer refs for signal', async () => {
   await tick()
   is(arr, [0, 1])
 
+  // NOTE: this is unwanted
   unsub()
   s1 = null
   await gc()
